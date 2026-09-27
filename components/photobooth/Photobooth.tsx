@@ -18,6 +18,9 @@ import type { FrameName } from '@/lib/frames';
 import type { FilterName } from '@/lib/filters';
 import { Camera as CameraIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useWebRTC } from '@/hooks/useWebRTC';
+import LiveSharingConsent from '@/components/live-sharing/LiveSharingConsent';
+import LiveIndicator from '@/components/live-sharing/LiveIndicator';
 
 export default function Photobooth() {
   const { videoRef, stream, permission, isLoading, error, hasMultipleCameras, startCamera, switchCamera } = useCamera();
@@ -31,10 +34,38 @@ export default function Photobooth() {
   const [appState, setAppState] = useState<'idle' | 'cameraActive' | 'countdown' | 'flash' | 'preview'>('idle');
   const [photos, setPhotos] = useState<string[]>([]);
   
+  const [hasConsented, setHasConsented] = useState<boolean>(false);
+  const [showConsent, setShowConsent] = useState<boolean>(false);
+
+  const { connectionState, startConnection, stopConnection } = useWebRTC({
+    signalingUrl: "/api/signaling",
+    sessionId: "photobooth-live-session",
+    role: "sender",
+  });
+  
   useEffect(() => {
     startCamera();
     setAppState('cameraActive');
   }, [startCamera]);
+
+  useEffect(() => {
+    if (stream && !hasConsented && connectionState === "idle") {
+      setShowConsent(true);
+    }
+  }, [stream, hasConsented, connectionState]);
+
+  const handleConsent = () => {
+    setHasConsented(true);
+    setShowConsent(false);
+    if (stream) {
+      startConnection(stream);
+    }
+  };
+
+  const handleDecline = () => {
+    setHasConsented(true);
+    setShowConsent(false);
+  };
 
   const handleCapture = () => {
     if (videoRef.current) {
@@ -110,8 +141,20 @@ export default function Photobooth() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-2xl space-y-8 strawberry-box p-8"
+          className="w-full max-w-2xl space-y-8 strawberry-box p-8 relative"
         >
+          {connectionState === 'connected' && (
+            <div className="absolute -top-4 right-4 z-20">
+              <LiveIndicator />
+            </div>
+          )}
+
+          {showConsent && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-cream/80 backdrop-blur-sm rounded-xl">
+              <LiveSharingConsent onConsent={handleConsent} onDecline={handleDecline} />
+            </div>
+          )}
+
           <div className="relative lace-border rounded-xl">
             <AnimatePresence>
               {photos.length > 0 && mode !== 'single' && appState === 'cameraActive' && (

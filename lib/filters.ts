@@ -7,7 +7,11 @@ export type FilterName =
   | "warmVintage"
   | "dreamyCream"
   | "strawberryTint"
-  | "bwVintage";
+  | "bwVintage"
+  | "peachGlow"
+  | "midnightBlue"
+  | "highContrastBw"
+  | "sunset";
 
 export interface FilterOption {
   id: FilterName;
@@ -22,6 +26,10 @@ export const FILTERS: FilterOption[] = [
   { id: "dreamyCream", name: "Dreamy Cream", label: "☁️" },
   { id: "strawberryTint", name: "Strawberry Tint", label: "🍓" },
   { id: "bwVintage", name: "B&W Vintage", label: "🖤" },
+  { id: "peachGlow", name: "Peach Glow", label: "🍑" },
+  { id: "midnightBlue", name: "Midnight Blue", label: "🌙" },
+  { id: "highContrastBw", name: "High Contrast", label: "🎞️" },
+  { id: "sunset", name: "Sunset", label: "🌅" },
 ];
 
 function clamp(value: number): number {
@@ -54,6 +62,18 @@ export function applyFilter(
       break;
     case "bwVintage":
       applyBwVintage(data, width, height);
+      break;
+    case "peachGlow":
+      applyPeachGlow(data);
+      break;
+    case "midnightBlue":
+      applyMidnightBlue(data);
+      break;
+    case "highContrastBw":
+      applyHighContrastBw(data, width, height);
+      break;
+    case "sunset":
+      applySunset(data);
       break;
   }
 
@@ -160,6 +180,61 @@ function applyBwVintage(
   }
 }
 
+function applyPeachGlow(data: Uint8ClampedArray): void {
+  for (let i = 0; i < data.length; i += 4) {
+    // Warm, peachy tint with slight glow
+    data[i] = clamp(data[i] * 1.05 + 15); // R
+    data[i + 1] = clamp(data[i + 1] * 1.02 + 5); // G
+    data[i + 2] = clamp(data[i + 2] * 0.95); // B
+  }
+}
+
+function applyMidnightBlue(data: Uint8ClampedArray): void {
+  for (let i = 0; i < data.length; i += 4) {
+    // Cool, moody blue tint
+    data[i] = clamp(data[i] * 0.8); // R
+    data[i + 1] = clamp(data[i + 1] * 0.9 + 5); // G
+    data[i + 2] = clamp(data[i + 2] * 1.2 + 20); // B
+    
+    // Add contrast
+    data[i] = clamp(128 + (data[i] - 128) * 1.1);
+    data[i + 1] = clamp(128 + (data[i + 1] - 128) * 1.1);
+    data[i + 2] = clamp(128 + (data[i + 2] - 128) * 1.1);
+  }
+}
+
+function applyHighContrastBw(data: Uint8ClampedArray, width: number, height: number): void {
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+
+    // Desaturate to luminance
+    const gray = r * 0.299 + g * 0.587 + b * 0.114;
+
+    // High contrast
+    const contrastGray = clamp(128 + (gray - 128) * 1.5);
+
+    data[i] = contrastGray;
+    data[i + 1] = contrastGray;
+    data[i + 2] = contrastGray;
+  }
+}
+
+function applySunset(data: Uint8ClampedArray): void {
+  for (let i = 0; i < data.length; i += 4) {
+    // Deep orange/red warmth
+    data[i] = clamp(data[i] * 1.1 + 30); // R
+    data[i + 1] = clamp(data[i + 1] * 0.95 + 10); // G
+    data[i + 2] = clamp(data[i + 2] * 0.8); // B
+    
+    // Contrast boost
+    data[i] = clamp(128 + (data[i] - 128) * 1.1);
+    data[i + 1] = clamp(128 + (data[i + 1] - 128) * 1.1);
+    data[i + 2] = clamp(128 + (data[i + 2] - 128) * 1.1);
+  }
+}
+
 // Get CSS filter string for live preview (approximation of canvas filters)
 export function getCSSFilter(filter: FilterName): string {
   switch (filter) {
@@ -175,6 +250,14 @@ export function getCSSFilter(filter: FilterName): string {
       return "brightness(1.02) hue-rotate(-10deg) saturate(1.1)";
     case "bwVintage":
       return "grayscale(1) contrast(1.1) brightness(1.05)";
+    case "peachGlow":
+      return "brightness(1.1) sepia(0.2) hue-rotate(-5deg) saturate(1.2)";
+    case "midnightBlue":
+      return "brightness(0.9) contrast(1.2) hue-rotate(180deg) saturate(0.8)";
+    case "highContrastBw":
+      return "grayscale(1) contrast(1.5)";
+    case "sunset":
+      return "brightness(1.05) contrast(1.1) sepia(0.3) saturate(1.4) hue-rotate(-15deg)";
     default:
       return "none";
   }
