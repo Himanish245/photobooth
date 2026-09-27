@@ -55,8 +55,14 @@ export default function PhotoStrip({
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center p-8 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-blush min-h-[300px] w-full max-w-md"
+      className="flex flex-col items-center justify-center p-8 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-blush min-h-[300px] w-full max-w-md relative group"
     >
+      {/* Cute corners */}
+      <div className="absolute top-3 left-3 text-rose/40 text-sm">🎀</div>
+      <div className="absolute top-3 right-3 text-rose/40 text-sm">🍓</div>
+      <div className="absolute bottom-3 left-3 text-rose/40 text-sm">🌸</div>
+      <div className="absolute bottom-3 right-3 text-rose/40 text-sm">✨</div>
+
       <div className="flex gap-3 mb-8">
         {Array.from({ length: targetCount }).map((_, i) => (
           <div

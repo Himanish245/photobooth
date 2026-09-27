@@ -110,19 +110,19 @@ export default function Photobooth() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-2xl space-y-8"
+          className="w-full max-w-2xl space-y-8 strawberry-box p-8"
         >
-          <div className="relative">
+          <div className="relative lace-border rounded-xl">
             <AnimatePresence>
               {photos.length > 0 && mode !== 'single' && appState === 'cameraActive' && (
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="absolute -top-12 left-0 w-full text-center z-10"
+                  className="absolute -top-14 left-0 w-full text-center z-10"
                 >
                   <span className="font-handwritten text-3xl text-deep-rose bg-cream/90 backdrop-blur-sm px-6 py-2 rounded-full shadow-md border border-blush/50 inline-block animate-float">
-                    Strike a pose! Photo {photos.length + 1} of {targetCount}
+                    Strike a pose! 🎀 Photo {photos.length + 1} of {targetCount}
                   </span>
                 </motion.div>
               )}
@@ -146,16 +146,19 @@ export default function Photobooth() {
           </div>
 
           <div className="flex justify-center mt-6 mb-8">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
               onClick={triggerCaptureSequence}
               disabled={appState !== 'cameraActive'}
-              className="relative w-24 h-24 rounded-full bg-gradient-to-br from-rose to-strawberry shadow-[0_8px_30px_rgba(201,76,76,0.3)] flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 group border-[6px] border-cream"
+              className="relative w-24 h-24 rounded-full bg-gradient-to-br from-rose to-strawberry shadow-[0_8px_30px_rgba(201,76,76,0.3)] flex items-center justify-center transition-all disabled:opacity-50 disabled:hover:scale-100 group border-[6px] border-cream"
               aria-label="Take photo"
             >
               <div className="absolute inset-1 rounded-full border border-white/40 flex items-center justify-center">
                 <CameraIcon className="w-8 h-8 text-cream opacity-90 group-hover:opacity-100 transition-opacity" />
               </div>
-            </button>
+            </motion.button>
           </div>
 
           <div className="space-y-6 bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-blush/50">

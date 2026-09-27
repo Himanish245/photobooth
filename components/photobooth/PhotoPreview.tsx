@@ -23,20 +23,36 @@ export default function PhotoPreview({ dataUrl, onRetake }: PhotoPreviewProps) {
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: 'spring', damping: 20 }}
-        className="p-6 bg-white shadow-xl rounded-sm border border-blush/50 relative paper-card max-w-full"
+        className="p-6 bg-white shadow-xl rounded-sm border border-blush/50 relative paper-card max-w-full group"
       >
-        <img src={dataUrl} alt="Captured moment" className="max-w-full max-h-[60vh] object-contain rounded-sm" />
+        {/* Cute corners */}
+        <div className="absolute top-2 left-2 text-rose/40 text-xs">🎀</div>
+        <div className="absolute top-2 right-2 text-rose/40 text-xs">🍓</div>
+        <div className="absolute bottom-2 left-2 text-rose/40 text-xs">🌸</div>
+        <div className="absolute bottom-2 right-2 text-rose/40 text-xs">✨</div>
+        
+        <img src={dataUrl} alt="Captured moment" className="max-w-full max-h-[60vh] object-contain rounded-sm shadow-inner" />
       </motion.div>
 
-      <div className="flex gap-4">
-        <button onClick={onRetake} className="btn-secondary flex items-center gap-2 px-6 py-3 rounded-full text-soft-brown bg-white border border-blush shadow-sm hover:bg-blush/30 transition-colors font-medium">
+      <div className="flex gap-4 mt-2">
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onRetake} 
+          className="btn-secondary flex items-center gap-2 px-6 py-3 rounded-full text-soft-brown bg-white border border-blush shadow-sm hover:bg-blush/30 transition-colors font-medium"
+        >
           <RotateCcw className="w-4 h-4" />
           Retake
-        </button>
-        <button onClick={handleDownload} className="btn-primary flex items-center gap-2 px-6 py-3 rounded-full text-cream bg-gradient-to-r from-rose to-strawberry shadow-md hover:shadow-lg hover:scale-105 transition-all font-medium">
+        </motion.button>
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleDownload} 
+          className="btn-primary flex items-center gap-2 px-6 py-3 rounded-full text-cream bg-gradient-to-r from-rose to-strawberry shadow-md hover:shadow-lg transition-all font-medium"
+        >
           <Download className="w-4 h-4" />
           Save Photo ♡
-        </button>
+        </motion.button>
       </div>
     </div>
   );

@@ -34,6 +34,8 @@ export const metadata: Metadata = {
   },
 };
 
+import FloatingDecor from "@/components/hero/FloatingDecor";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -41,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${playfair.variable} ${dancing.variable} ${inter.variable}`}
     >
       <body className="min-h-screen antialiased">
+        <FloatingDecor />
         {children}
         {/* Subtle grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
