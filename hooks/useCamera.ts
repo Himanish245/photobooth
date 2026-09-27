@@ -73,10 +73,13 @@ export function useCamera(options: UseCameraOptions = {}): UseCameraReturn {
       setIsLoading(true);
       setError(null);
 
-      // Stop existing stream
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
+      // Stop existing stream using a functional state update to avoid depending on stream state
+      setStream((prevStream) => {
+        if (prevStream) {
+          prevStream.getTracks().forEach((track) => track.stop());
+        }
+        return null;
+      });
 
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -117,7 +120,7 @@ export function useCamera(options: UseCameraOptions = {}): UseCameraReturn {
         setIsLoading(false);
       }
     },
-    [facing, stream]
+    [facing]
   );
 
   const switchCamera = useCallback(async () => {

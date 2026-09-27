@@ -29,7 +29,13 @@ export default function CameraPreview({
 
   useEffect(() => {
     if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+      if (videoRef.current.srcObject !== stream) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(e => {
+          // Ignore AbortError as it's common in React Strict Mode double-renders
+          if (e.name !== 'AbortError') console.error(e);
+        });
+      }
     }
   }, [stream, videoRef]);
 

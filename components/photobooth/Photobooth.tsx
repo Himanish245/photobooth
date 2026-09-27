@@ -24,8 +24,8 @@ export default function Photobooth() {
   const { canvasRef, capturePhoto } = usePhotoCapture();
   
   const [mode, setMode] = useState<Mode>('single');
-  const [frame, setFrame] = useState<FrameName>('classic');
-  const [filter, setFilter] = useState<FilterName>('normal');
+  const [frame, setFrame] = useState<FrameName>('none');
+  const [filter, setFilter] = useState<FilterName>('none');
   const [overlays, setOverlays] = useState<string[]>([]);
   
   const [appState, setAppState] = useState<'idle' | 'cameraActive' | 'countdown' | 'flash' | 'preview'>('idle');
@@ -48,7 +48,8 @@ export default function Photobooth() {
           setAppState('preview');
         } else {
           setTimeout(() => {
-            setAppState('cameraActive');
+            setAppState('countdown');
+            startCountdown();
           }, 1500);
         }
       }
